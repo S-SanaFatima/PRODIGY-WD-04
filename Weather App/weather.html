@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Updates</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Updates</h1>
+        <div id="weatherDetails">
+            <p>City: <span id="cityName">undefined</span></p>
+            <p>Temperature: <span id="temperature">32°C</span></p>
+            <p>Condition: <span id="condition"> cloudy</span></p>
+            <p>Wind Speed: <span id="windSpeed">100 km/h</span></p>
+        </div>
+        <button id="backButton">Back to Home</button>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cityName = localStorage.getItem('cityName');
+            if (!cityName) {
+                alert('City name not found. Please go back and enter a city.');
+                window.location.href = 'index.html';
+                return;
+            }
+
+            document.getElementById('cityName').innerText = cityName;
+
+            const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+            const weatherApiUrl = `https://api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key} `;
+
+            fetch(weatherApiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('temperature').innerText = data.main.temp;
+                    document.getElementById('condition').innerText = data.weather[0].description;
+                    document.getElementById('windSpeed').innerText = data.wind.speed;
+                })
+                .catch(error => {
+                    console.error('Error fetching weather data:', error);
+                    alert('Failed to fetch weather data. Please try again later.');
+                });
+
+            document.getElementById('backButton').addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+</html>
